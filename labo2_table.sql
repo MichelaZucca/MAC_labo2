@@ -9,17 +9,41 @@ CREATE TABLE clients(
 );
 
 CREATE TABLE comptes (
-    id INT NOT NULL AUTO_INCREMENT,
+	id INT NOT NULL AUTO_INCREMENT,
     num VARCHAR(30) NOT NULL UNIQUE,
-    solde FLOAT NOT NULL,
-    min_autorise FLOAT NOT NULL,
-    max_retrait_journalier FLOAT NOT NULL,
+    solde FLOAT,
+    min_autorise FLOAT,
+    max_retrait_journalier FLOAT,
     blocage BOOLEAN,
-    propietaire INT NOT NULL,
+    propietaire INT,
     droit_lecture_ecriture INT,
     PRIMARY KEY (id),
-    CONSTRAINT fx_prorietaire FOREIGN KEY (proprietaire) REFERENCES client(id)
-};
+    CONSTRAINT fx_prorietaire FOREIGN KEY (propietaire) REFERENCES clients(id)
+);
+
+CREATE TABLE erreurs (
+    num INT NOT NULL,
+    nom VARCHAR(30),
+    PRIMARY KEY(num)
+);
+
+CREATE TABLE journal (
+	id INT NOT NULL AUTO_INCREMENT,
+	date_val VARCHAR(30), 
+    heure VARCHAR(30),   
+    id_compte VARCHAR(30),
+    id_client INT, 
+    typeOperation VARCHAR(30),
+    autorisation INT,
+    etat_init FLOAT,
+    etat_result FLOAT,
+    PRIMARY KEY(id),
+	CONSTRAINT fx_id_compte FOREIGN KEY (id_compte) REFERENCES comptes(num),
+	CONSTRAINT fx_client FOREIGN KEY (id_client) REFERENCES clients(id),
+    CONSTRAINT fx_autorisation FOREIGN KEY (autorisation) REFERENCES erreurs(num)
+);
+
+
 /*
 	Créer un index sur la colonne no ??
     
