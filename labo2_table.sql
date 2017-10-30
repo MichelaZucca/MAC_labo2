@@ -16,10 +16,19 @@ CREATE TABLE comptes (
     max_retrait_journalier FLOAT,
     blocage BOOLEAN,
     propietaire INT,
-    droit_lecture_ecriture INT,
     PRIMARY KEY (id),
     CONSTRAINT fx_prorietaire FOREIGN KEY (propietaire) REFERENCES clients(id)
 );
+
+CREATE TABLE Acces {
+	id INT NOT NULL AUTO_INCREMENT,
+    no_Compte VARCHAR(30) NOT NULL UNIQUE,
+    num_Client (30) NOT NULL,
+    acces ENUM('aucun','lecture','ecriture','lecture-ecriture') NOT NULL,
+    PRIMARY KEY (id),
+	CONSTRAINT fx_nom_Client FOREIGN KEY (nom_Client) REFERENCES clients(id),
+    CONSTRAINT fx_no_Compte FOREIGN KEY (no_Compte) REFERENCES comptes(num)
+};
 
 CREATE TABLE erreurs (
     num INT NOT NULL,
@@ -29,7 +38,7 @@ CREATE TABLE erreurs (
 
 CREATE TABLE journal (
 	id INT NOT NULL AUTO_INCREMENT,
-	date_val VARCHAR(30), 
+	date_val DateTime, 
     heure VARCHAR(30),   
     id_compte VARCHAR(30),
     id_client INT, 
