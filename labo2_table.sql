@@ -20,15 +20,14 @@ CREATE TABLE comptes (
     CONSTRAINT fx_prorietaire FOREIGN KEY (propietaire) REFERENCES clients(id)
 );
 
-CREATE TABLE Acces {
-	id INT NOT NULL AUTO_INCREMENT,
-    no_Compte VARCHAR(30) NOT NULL UNIQUE,
-    num_Client (30) NOT NULL,
-    acces ENUM('aucun','lecture','ecriture','lecture-ecriture') NOT NULL,
-    PRIMARY KEY (id),
-	CONSTRAINT fx_nom_Client FOREIGN KEY (nom_Client) REFERENCES clients(id),
+CREATE TABLE Acces (
+    no_Compte VARCHAR(30) NOT NULL,
+    num_Client INT NOT NULL,
+    acces ENUM('aucun','lecture','ecriture','lecture-ecriture') NOT NULL ,
+    PRIMARY KEY (no_Compte, num_Client),
+	CONSTRAINT fx_num_Client FOREIGN KEY (num_Client) REFERENCES clients(id),
     CONSTRAINT fx_no_Compte FOREIGN KEY (no_Compte) REFERENCES comptes(num)
-};
+);
 
 CREATE TABLE erreurs (
     num INT NOT NULL,
