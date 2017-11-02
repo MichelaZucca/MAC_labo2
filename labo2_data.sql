@@ -16,3 +16,7 @@ GRANT ALL PRIVILEGES ON Transactions.* TO 'admin'@'%'  WITH GRANT OPTION;
 GRANT EXECUTE ON Transactions.* TO 'U1'@'%';
 GRANT EXECUTE ON Transactions.* TO 'U2'@'%';
 GRANT EXECUTE ON Transactions.* TO 'U3'@'%';
+
+INSERT INTO Transactions.clients (nom) VALUES ('U1');
+INSERT INTO Transactions.clients (nom) VALUES ('U2');
+INSERT INTO Transactions.clients (nom) VALUES ('U3');
