@@ -57,7 +57,7 @@ DROP TRIGGER IF EXISTS check_solde;
 DELIMITER //
 CREATE TRIGGER check_solde BEFORE DELETE ON Transactions.comptes
   FOR EACH ROW BEGIN
-    IF solde > 0 THEN
+    IF OLD.solde > 0 THEN
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Account must be empty';
     END IF;	
 END //
