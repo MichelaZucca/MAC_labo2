@@ -1,0 +1,1 @@
+CALL lire_etat_compte('2');
