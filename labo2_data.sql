@@ -28,19 +28,19 @@ INSERT INTO Transactions.clients (nom) VALUES ('U3');
 INSERT INTO Transactions.comptes (num, solde, min_autorise, max_retrait_journalier, blocage, propietaire)
 VALUES ('1', 0, 0, 1000, FALSE, (SELECT id FROM clients WHERE nom = 'U1'));
 
-INSERT INTO Transactions.Acces (no_Compte, num_Client, acces)
-VALUES ('1', (SELECT id FROM clients WHERE nom = 'U1'), 'lecture-ecriture');
+INSERT INTO Transactions.acces (id_compte, id_client, acces)
+VALUES ((SELECT id FROM comptes WHERE num = '1'), (SELECT id FROM clients WHERE nom = 'U1'), 'lecture-ecriture');
 
-INSERT INTO Transactions.Acces (no_Compte, num_Client, acces)
-VALUES ('1', (SELECT id FROM clients WHERE nom = 'U2'), 'lecture-ecriture');
+INSERT INTO Transactions.acces (id_compte, id_client, acces)
+VALUES ((SELECT id FROM comptes WHERE num = '1'), (SELECT id FROM clients WHERE nom = 'U2'), 'lecture-ecriture');
 
 
 -- Create account (U1's property) with shared access between U1 and U2
 INSERT INTO Transactions.comptes (num, solde, min_autorise, max_retrait_journalier, blocage, propietaire)
 VALUES ('2', 0, 0, 1000, FALSE, (SELECT id FROM clients WHERE nom = 'U1'));
 
-INSERT INTO Transactions.Acces (no_Compte, num_Client, acces)
-VALUES ('2', (SELECT id FROM clients WHERE nom = 'U1'), 'ecriture');
+INSERT INTO Transactions.acces (id_compte, id_client, acces)
+VALUES ((SELECT id FROM comptes WHERE num = '2'), (SELECT id FROM clients WHERE nom = 'U1'), 'lecture-ecriture');
 
-INSERT INTO Transactions.Acces (no_Compte, num_Client, acces)
-VALUES ('2', (SELECT id FROM clients WHERE nom = 'U3'), 'aucun');
+INSERT INTO Transactions.acces (id_compte, id_client, acces)
+VALUES ((SELECT id FROM comptes WHERE num = '2'), (SELECT id FROM clients WHERE nom = 'U3'), 'lecture');

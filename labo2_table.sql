@@ -4,7 +4,7 @@ USE Transactions;
 
 CREATE TABLE clients(
 	id INT NOT NULL AUTO_INCREMENT,
-	nom VARCHAR(30) NOT NULL,
+	nom VARCHAR(30) NOT NULL UNIQUE,
     PRIMARY KEY (id) 
 );
 
@@ -21,34 +21,26 @@ CREATE TABLE comptes (
 );
 
 CREATE TABLE Acces (
-    no_Compte VARCHAR(30) NOT NULL,
-    num_Client INT NOT NULL,
-    acces ENUM('aucun','lecture','ecriture','lecture-ecriture') NOT NULL ,
-    PRIMARY KEY (no_Compte, num_Client),
-	CONSTRAINT fx_num_Client FOREIGN KEY (num_Client) REFERENCES clients(id),
-    CONSTRAINT fx_no_Compte FOREIGN KEY (no_Compte) REFERENCES comptes(num)
-);
-
-CREATE TABLE erreurs (
-    num INT NOT NULL,
-    nom VARCHAR(30),
-    PRIMARY KEY(num)
+    id_compte INT NOT NULL,
+    id_client INT NOT NULL,
+    acces ENUM('lecture','ecriture','lecture-ecriture') NOT NULL ,
+    PRIMARY KEY (id_compte, id_client),
+	CONSTRAINT fx_id_Client FOREIGN KEY (id_client) REFERENCES clients(id),
+    CONSTRAINT fx_id_Compte FOREIGN KEY (id_compte) REFERENCES comptes(id)
 );
 
 CREATE TABLE journal (
 	id INT NOT NULL AUTO_INCREMENT,
 	date_val DateTime, 
-    heure VARCHAR(30),   
-    id_compte VARCHAR(30),
+    id_compte INT,
     id_client INT, 
-    typeOperation VARCHAR(30),
+    typeOperation ENUM('lecture', 'ecriture'),
     autorisation INT,
     etat_init FLOAT,
     etat_result FLOAT,
     PRIMARY KEY(id),
-	CONSTRAINT fx_id_compte FOREIGN KEY (id_compte) REFERENCES comptes(num),
-	CONSTRAINT fx_client FOREIGN KEY (id_client) REFERENCES clients(id),
-    CONSTRAINT fx_autorisation FOREIGN KEY (autorisation) REFERENCES erreurs(num)
+	CONSTRAINT fx_compte FOREIGN KEY (id_compte) REFERENCES comptes(id),
+	CONSTRAINT fx_client FOREIGN KEY (id_client) REFERENCES clients(id)
 );
 
 

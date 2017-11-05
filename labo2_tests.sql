@@ -1,1 +1,1 @@
-CALL lire_etat_compte('2');
+CALL lire_etat_compte_par_num('2');
