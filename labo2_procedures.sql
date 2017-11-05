@@ -33,7 +33,7 @@ BEGIN
             comptes.blocage,
 			clients.nom
 		FROM Transactions.comptes
-		INNER JOIN clients ON comptes.propietaire = clients.id
+		INNER JOIN clients ON comptes.proprietaire = clients.id
 		WHERE comptes.id = id_compte;
         
 		CALL log_journal(id_compte, id_client, 'lecture', 0, solde, solde);
@@ -160,15 +160,15 @@ DELIMITER //
 CREATE PROCEDURE log_journal(
 	id_compte INT,
     id_client INT, 
-    typeOperation ENUM('lecture', 'ecriture'),
+    type_operation ENUM('lecture', 'ecriture'),
     autorisation INT,
     solde_init FLOAT,
     solde_result FLOAT
 )
 BEGIN
 
-	INSERT INTO Transactions.journal (date_val, id_compte, id_client, typeOperation, autorisation, etat_init, etat_result)
-    VALUES (NOW(), id_compte, id_client, typeOperation, autorisation, solde_init, solde_result);
+	INSERT INTO Transactions.journal (date_val, id_compte, id_client, type_operation, autorisation, etat_init, etat_result)
+    VALUES (NOW(), id_compte, id_client, type_operation, autorisation, solde_init, solde_result);
 
 END //
 

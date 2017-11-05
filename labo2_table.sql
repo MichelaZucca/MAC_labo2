@@ -15,12 +15,12 @@ CREATE TABLE comptes (
     min_autorise FLOAT,
     max_retrait_journalier FLOAT,
     blocage BOOLEAN,
-    propietaire INT,
+    proprietaire INT,
     PRIMARY KEY (id),
-    CONSTRAINT fx_prorietaire FOREIGN KEY (propietaire) REFERENCES clients(id)
+    CONSTRAINT fx_proprietaire FOREIGN KEY (proprietaire) REFERENCES clients(id)
 );
 
-CREATE TABLE Acces (
+CREATE TABLE acces (
     id_compte INT NOT NULL,
     id_client INT NOT NULL,
     acces ENUM('lecture','ecriture','lecture-ecriture') NOT NULL ,
@@ -34,7 +34,7 @@ CREATE TABLE journal (
 	date_val DateTime, 
     id_compte INT,
     id_client INT, 
-    typeOperation ENUM('lecture', 'ecriture'),
+    type_operation ENUM('lecture', 'ecriture'),
     autorisation INT,
     etat_init FLOAT,
     etat_result FLOAT,

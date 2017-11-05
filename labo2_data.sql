@@ -25,7 +25,7 @@ INSERT INTO Transactions.clients (nom) VALUES ('U3');
 
 
 -- Create account (U1's property) with shared access (read/write) between U1 and U2
-INSERT INTO Transactions.comptes (num, solde, min_autorise, max_retrait_journalier, blocage, propietaire)
+INSERT INTO Transactions.comptes (num, solde, min_autorise, max_retrait_journalier, blocage, proprietaire)
 VALUES ('1', 0, 0, 1000, FALSE, (SELECT id FROM clients WHERE nom = 'U1'));
 
 INSERT INTO Transactions.acces (id_compte, id_client, acces)
@@ -36,7 +36,7 @@ VALUES ((SELECT id FROM comptes WHERE num = '1'), (SELECT id FROM clients WHERE 
 
 
 -- Create account (U1's property) with shared access between U1 and U2
-INSERT INTO Transactions.comptes (num, solde, min_autorise, max_retrait_journalier, blocage, propietaire)
+INSERT INTO Transactions.comptes (num, solde, min_autorise, max_retrait_journalier, blocage, proprietaire)
 VALUES ('2', 0, 0, 1000, FALSE, (SELECT id FROM clients WHERE nom = 'U1'));
 
 INSERT INTO Transactions.acces (id_compte, id_client, acces)
