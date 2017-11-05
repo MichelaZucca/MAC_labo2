@@ -15,7 +15,6 @@ BEGIN
     
     # Get the curren client ID for logging pruposes
 	SELECT get_user_id() INTO id_client;
-
     
     # Get the current solde for logging purposes
     SELECT comptes.solde INTO solde FROM Transactions.comptes WHERE comptes.id = id_compte;
@@ -31,28 +30,15 @@ BEGIN
 			comptes.solde, 
 			comptes.min_autorise, 
 			comptes.max_retrait_journalier, 
+            comptes.blocage,
 			clients.nom
 		FROM Transactions.comptes
 		INNER JOIN clients ON comptes.propietaire = clients.id
 		WHERE comptes.id = id_compte;
         
-		CALL log_journal(
-			id_compte,
-			id_client,
-            'lecture',
-            0, 
-            solde,
-            solde
-		);
+		CALL log_journal(id_compte, id_client, 'lecture', 0, solde, solde);
 	ELSE 
-        CALL log_journal(
-			id_compte,
-			id_client,
-            'lecture',
-            3, 
-            solde,
-            solde
-		);
+        CALL log_journal(id_compte, id_client, 'lecture', 3, solde, solde );
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You don\'t have read access to that account.';
     END IF;
     
@@ -64,18 +50,12 @@ END //
     Paramètres:
     num_compte: le numéro de compte
 */
-
 DROP PROCEDURE IF EXISTS lire_etat_compte_par_num //
 DELIMITER //
 CREATE PROCEDURE lire_etat_compte_par_num (num_compte VARCHAR(30) )
 BEGIN
-
-	DECLARE id_compte INT;
-    SELECT comptes.id INTO id_compte 
-    FROM Transactions.comptes 
-    WHERE comptes.num = num_compte;
     
-    CALL lire_etat_compte(id_compte);
+    CALL lire_etat_compte( (SELECT id FROM Transactions.comptes WHERE num = num_compte) );
     
 END //
 
@@ -103,35 +83,17 @@ BEGIN
     SELECT get_user_compte_acces(id_compte) INTO user_acces;
     
     IF user_acces = 'ecriture' OR user_acces = 'lecture-ecriture' THEN 
-    
-		START TRANSACTION;
         
 		UPDATE Transactions.comptes
         SET comptes.solde = solde + montant 
         WHERE comptes.id = id_compte;
         
-        COMMIT;
-        
 		# Get the new solde for logging purposes
 		SELECT comptes.solde INTO nouveau_solde FROM Transactions.comptes WHERE comptes.id = id_compte;
         
-        CALL log_journal(
-			id_compte,
-			id_client,
-            'ecriture',
-            0, 
-            solde,
-            nouveau_solde
-		);
+        CALL log_journal(id_compte, id_client, 'ecriture', 0, solde, nouveau_solde);
     ELSE
-		 CALL log_journal(
-			id_compte,
-			id_client,
-            'ecriture',
-            4, 
-            solde,
-            solde
-		);
+		 CALL log_journal(id_compte, id_client, 'ecriture', 4, solde, solde);
         
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You don\'t have write access to that account.';
     END IF;
