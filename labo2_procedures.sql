@@ -13,6 +13,10 @@ BEGIN
     DECLARE user_acces ENUM('lecture','ecriture','lecture-ecriture');
     DECLARE solde FLOAT;
     
+    IF (SELECT COUNT(*) FROM Transactions.comptes WHERE id = id_compte) <= 0 THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This account doesn\'t exist.';
+    END IF;
+    
     # Get the curren client ID for logging pruposes
 	SELECT get_user_id() INTO id_client;
     
@@ -45,21 +49,6 @@ BEGIN
 END //
 
 /*
-	Affiche l'état d'un compte.
-    
-    Paramètres:
-    num_compte: le numéro de compte
-*/
-DROP PROCEDURE IF EXISTS lire_etat_compte_par_num //
-DELIMITER //
-CREATE PROCEDURE lire_etat_compte_par_num (num_compte VARCHAR(30) )
-BEGIN
-    
-    CALL lire_etat_compte( (SELECT id FROM Transactions.comptes WHERE num = num_compte) );
-    
-END //
-
-/*
 	Déposer un montant sur un compte
 */
 DROP PROCEDURE IF EXISTS deposer_sur_compte //
@@ -70,8 +59,13 @@ BEGIN
     DECLARE user_acces ENUM('lecture','ecriture','lecture-ecriture');
     DECLARE solde FLOAT;
     DECLARE nouveau_solde FLOAT;
-
-	
+    
+    # If the amount is less or 0, refuse the deposit
+    IF montant <= 0 THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You can\'t deposit a negative amount of money.';
+    ELSEIF (SELECT COUNT(*) FROM Transactions.comptes WHERE id = id_compte) <= 0 THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This account doesn\'t exist.';
+    END IF;
     
     # Get the curren client ID for logging pruposes
 	SELECT get_user_id() INTO id_client;
@@ -93,7 +87,7 @@ BEGIN
         
         CALL log_journal(id_compte, id_client, 'ecriture', 0, solde, nouveau_solde);
     ELSE
-		 CALL log_journal(id_compte, id_client, 'ecriture', 4, solde, solde);
+		CALL log_journal(id_compte, id_client, 'ecriture', 4, solde, solde);
         
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You don\'t have write access to that account.';
     END IF;
