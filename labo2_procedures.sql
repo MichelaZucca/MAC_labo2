@@ -1,4 +1,59 @@
 use transactions;
+
+DROP FUNCTION IF EXISTS has_Write_acces //
+DELIMITER //
+CREATE FUNCTION has_Write_acces (id_compte INT)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+	DECLARE autorized BOOLEAN DEFAULT false;
+    DECLARE id_client INT;
+	DECLARE user_acces ENUM('lecture','ecriture','lecture-ecriture');
+    
+	IF (SELECT COUNT(*) FROM Transactions.comptes WHERE id = id_compte) <= 0 THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This account doesn\'t exist.';
+    END IF;
+    
+    # Get the curren client ID for logging pruposes
+	SELECT get_user_id() INTO id_client;
+    
+    SELECT get_user_compte_acces(id_compte) INTO user_acces;
+	
+    # If everything alright read account
+    IF user_acces = 'ecriture' OR user_acces = 'lecture-ecriture' THEN 
+		SET autorized = true;
+	END IF;
+    
+    RETURN autorized;
+END//
+
+DROP FUNCTION IF EXISTS has_Read_acces //
+DELIMITER //
+CREATE FUNCTION has_Read_acces (id_compte INT)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+	DECLARE autorized BOOLEAN DEFAULT false;
+    DECLARE id_client INT;
+	DECLARE user_acces ENUM('lecture','ecriture','lecture-ecriture');
+    
+	IF (SELECT COUNT(*) FROM Transactions.comptes WHERE id = id_compte) <= 0 THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This account doesn\'t exist.';
+    END IF;
+    
+    # Get the curren client ID for logging pruposes
+	SELECT get_user_id() INTO id_client;
+    
+    SELECT get_user_compte_acces(id_compte) INTO user_acces;
+	
+    # If everything alright read account
+    IF user_acces = 'lecture' OR user_acces = 'lecture-ecriture' THEN 
+		SET autorized = true;
+	END IF;
+    
+    RETURN autorized;
+END//
+
 /*
 	Affiche l'état d'un compte. 
     
