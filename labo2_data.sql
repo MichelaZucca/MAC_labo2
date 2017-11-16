@@ -1,3 +1,4 @@
+use transactions;
 /*
 	Créer les utilisateurs avec leurs droit d'accès
     
@@ -10,7 +11,6 @@ CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'admin';
 CREATE USER IF NOT EXISTS 'U1'@'%' IDENTIFIED BY 'U1';
 CREATE USER IF NOT EXISTS 'U2'@'%' IDENTIFIED BY 'U2';
 CREATE USER IF NOT EXISTS 'U3'@'%' IDENTIFIED BY 'U3';
-
 -- Access
 GRANT ALL PRIVILEGES ON Transactions.* TO 'admin'@'%'  WITH GRANT OPTION;
 GRANT EXECUTE ON Transactions.* TO 'U1'@'%';
@@ -21,8 +21,6 @@ GRANT EXECUTE ON Transactions.* TO 'U3'@'%';
 INSERT INTO Transactions.clients (nom) VALUES ('U1');
 INSERT INTO Transactions.clients (nom) VALUES ('U2');
 INSERT INTO Transactions.clients (nom) VALUES ('U3');
-
-
 
 -- Create account (U1's property) with shared access (read/write) between U1 and U2
 INSERT INTO Transactions.comptes (num, solde, min_autorise, max_retrait_journalier, blocage, proprietaire)

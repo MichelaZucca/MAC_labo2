@@ -1,4 +1,4 @@
-
+use transactions;
 /*
 	Affiche l'état d'un compte. 
     
@@ -227,26 +227,26 @@ BEGIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
 	DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
 		
-	/* 1ère transaction on récupère le solde du compte cpt1 */
+	# 1ère transaction on récupère le solde du compte cpt1 
 	START TRANSACTION;
 		SELECT solde INTO etat FROM comptes where comptes.num = cpt1;
 	COMMIT; 
 	SET etat = etat - montant;
 
-	/* 2ème transaction on met à jour le solde du compte cpt1 */
+	# 2ème transaction on met à jour le solde du compte cpt1 
     START TRANSACTION;
 		UPDATE Transactions.comptes
 		SET comptes.solde = etat
 		WHERE comptes.num = cpt1;
 	COMMIT;
 	
-    /* 3ème transaction on récupère le solde du compte cpt2 */
+    # 3ème transaction on récupère le solde du compte cpt2 
 	START TRANSACTION;
 		SELECT solde INTO etat FROM comptes where comptes.num = cpt2;
 	COMMIT;
 	SET etat = etat + montant;
     
-    /* 4ème transaction on met à jour le solde du compte cpt2 */
+    # 4ème transaction on met à jour le solde du compte cpt2 
 	START TRANSACTION;
 		UPDATE Transactions.comptes
 		SET comptes.solde = etat
@@ -275,15 +275,15 @@ BEGIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
 	DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
 		
-	/* 1ère transaction on récupère le solde du compte cpt1 */
-    /* Pose le verrou de lecture */
+	# 1ère transaction on récupère le solde du compte cpt1 
+    # Pose le verrou de lecture 
 	START TRANSACTION;
 		SELECT solde INTO etat FROM comptes where comptes.num = cpt1 lock in share mode;
 	COMMIT; 
 	SET etat = etat - montant;
 
-	/* 2ème transaction on met à jour le solde du compte cpt1 */
-    /* Pose le verrou d'ecriture */
+	# 2ème transaction on met à jour le solde du compte cpt1 
+    # Pose le verrou d'ecriture 
     SELECT solde FROM comptes WHERE comptes.num = cpt1 FOR UPDATE;
     START TRANSACTION;
 		UPDATE Transactions.comptes
@@ -291,15 +291,15 @@ BEGIN
 		WHERE comptes.num = cpt1;
 	COMMIT;
 	
-    /* 3ème transaction on récupère le solde du compte cpt2 */
-    /* Pose le verrou de lecture */
+    # 3ème transaction on récupère le solde du compte cpt2 
+    # Pose le verrou de lecture 
 	START TRANSACTION;
 		SELECT solde INTO etat FROM comptes where comptes.num = cpt2 lock in share mode;
 	COMMIT;
 	SET etat = etat + montant;
     
-    /* 4ème transaction on met à jour le solde du compte cpt2 */
-	/* Pose le verrou d'ecriture */
+    # 4ème transaction on met à jour le solde du compte cpt2 
+	# Pose le verrou d'ecriture 
     SELECT solde FROM comptes WHERE comptes.num = cpt2 FOR UPDATE;
 	START TRANSACTION;
 		UPDATE Transactions.comptes
@@ -320,48 +320,6 @@ END //
     
     Remarques, par précisé si on gère le droit d'accès. Mais je pense que oui.. à confirmer lundi
 */
-DROP PROCEDURE IF EXISTS transferer4 //
-DELIMITER //
-CREATE PROCEDURE transferer4(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
-BEGIN
-	DECLARE etat FLOAT;
-    
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
-	DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
-		
-	/* 1ère transaction on récupère le solde du compte cpt1 */
-    /* Pose le verrou de lecture */
-	START TRANSACTION;
-		SELECT solde INTO etat FROM comptes where comptes.num = cpt1 lock in share mode;
-	COMMIT; 
-	SET etat = etat - montant;
-
-	/* 2ème transaction on met à jour le solde du compte cpt1 */
-    /* Pose le verrou d'ecriture */
-    SELECT solde FROM comptes WHERE comptes.num = cpt1 FOR UPDATE;
-    START TRANSACTION;
-		UPDATE Transactions.comptes
-		SET comptes.solde = etat
-		WHERE comptes.num = cpt1;
-	COMMIT;
-	
-    /* 3ème transaction on récupère le solde du compte cpt2 */
-    /* Pose le verrou de lecture */
-	START TRANSACTION;
-		SELECT solde INTO etat FROM comptes where comptes.num = cpt2 lock in share mode;
-	COMMIT;
-	SET etat = etat + montant;
-    
-    /* 4ème transaction on met à jour le solde du compte cpt2 */
-	/* Pose le verrou d'ecriture */
-    SELECT solde FROM comptes WHERE comptes.num = cpt2 FOR UPDATE;
-	START TRANSACTION;
-		UPDATE Transactions.comptes
-		SET comptes.solde = etat
-		WHERE comptes.num = cpt2;
-	COMMIT;
-    
-END //
 
 DELIMITER ;
 

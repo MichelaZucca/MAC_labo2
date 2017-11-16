@@ -6,12 +6,14 @@
 package mac_labo2_part2;
 
 import java.sql.*;
+import java.time.temporal.IsoFields;
 
 class User {
 
     private Connection conSql;
     private Statement statement;
     private String name;
+    private boolean isFinish = false;
 
     User(String name) {
         this.name = name;
@@ -38,35 +40,53 @@ class User {
             String procedure) {
 
         String req = "call " + procedure + "(" + cpt1 + "," + cpt2 + "," + montant + ")";
-        Thread thread = new Thread() {
+        isFinish = false;
+     /*   Thread thread = new Thread() {
             @Override
-            public void run() {
-                while (true) {
+            public void run() {*/
+                while (!isFinish) {
                     for (int i = 0; i < nbTransaction; i++) {
+                        System.out.println("User : " + name + " i: " + i);
                         try {
                             // TODO appel de la procédure choisie
-                            ResultSet result = statement.executeQuery(req);
+                            statement.executeQuery(req);
                             // compter les interblocages et autres et relancé si procédure rejeté
                         } catch (Exception e) {
                             System.out.println("Erreur requete : " + e.getMessage());
                         }
                     }
+                    isFinish = true;
                 }
-            }
+       /*     }
         };
-        thread.start();
+        thread.start();*/
+    }
+
+    public boolean isFinish() {
+        return isFinish;
+    }
+
+    public void deposerSurCompte(int cpt, float montant) {
+        try {
+            statement.executeQuery("call deposer_sur_compte(1," + montant + ")");
+        } catch (Exception e) {
+            System.out.println("Erreur : " + e.getMessage());
+        }
     }
 
     public void etatComptes() {
         try {
             // TODO appel de la procédure choisie
-            
-            ResultSet result = statement.executeQuery("deposer_sur_compte(1, 300)");
-            result = statement.executeQuery("call lire_etat_compte(1)");
-            result = statement.executeQuery("call lire_etat_compte(2)");
+            ResultSet result = statement.executeQuery("Select * from comptes");
+            while (result.next()) {
+                int id = result.getByte("id");
+                String num = result.getNString("num");
+                float solde = result.getFloat("solde");
+                System.out.println("id " + id + " num : " + num + " solde : " + solde);
+            }
             // compter les interblocages et autres et relancé si procédure rejeté
         } catch (Exception e) {
-
+            System.out.println("Erreur : " + e.getMessage());
         }
     }
 }
@@ -75,18 +95,24 @@ public class MAC_labo2_part2 {
 
     public static void main(String[] args) {
 
+        String transferer1 = "transferer1";
+        String transferer2 = "transferer2";
+        String transferer3 = "transferer3";
+        String transferer4 = "transferer4";
+
         User u1 = new User("U1");
         User u2 = new User("U2");
-
         User root = new User("root");
-        root.connextionToDB();
-        root.etatComptes();
-        
-        u1.connextionToDB();
-    //    u1.demarrer("cpt1", "cpt2", 20, 2, "transferer1");
-        root.etatComptes();
-       
 
+        root.connextionToDB();
+        u1.connextionToDB();
+        u2.connextionToDB();
+
+        // cpt1, cpt2, montant, nb, procedure
+        u1.demarrer("1", "2", 20, 10, transferer1);
+        u2.demarrer("2", "1", 10, 10, transferer1);
+
+        System.exit(0);
     }
 
 }
