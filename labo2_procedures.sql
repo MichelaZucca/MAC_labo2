@@ -1,58 +1,5 @@
 use transactions;
 
-DROP FUNCTION IF EXISTS has_write_acces //
-DELIMITER //
-CREATE FUNCTION has_write_acces (id_compte INT)
-RETURNS BOOLEAN
-DETERMINISTIC
-BEGIN
-	DECLARE autorized BOOLEAN DEFAULT false;
-    DECLARE id_client INT;
-	DECLARE user_acces ENUM('lecture','ecriture','lecture-ecriture');
-    
-	IF (SELECT COUNT(*) FROM Transactions.comptes WHERE id = id_compte) <= 0 THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This account doesn\'t exist.';
-    END IF;
-    
-    # Get the curren client ID for logging pruposes
-	SELECT get_user_id() INTO id_client;
-    
-    SELECT get_user_compte_acces(id_compte) INTO user_acces;
-	
-    # If everything alright read account
-    IF user_acces = 'ecriture' OR user_acces = 'lecture-ecriture' THEN 
-		SET autorized = true;
-	END IF;
-    
-    RETURN autorized;
-END//
-
-DROP FUNCTION IF EXISTS has_read_acces //
-DELIMITER //
-CREATE FUNCTION has_read_acces (id_compte INT)
-RETURNS BOOLEAN
-DETERMINISTIC
-BEGIN
-	DECLARE autorized BOOLEAN DEFAULT false;
-    DECLARE id_client INT;
-	DECLARE user_acces ENUM('lecture','ecriture','lecture-ecriture');
-    
-	IF (SELECT COUNT(*) FROM Transactions.comptes WHERE id = id_compte) <= 0 THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This account doesn\'t exist.';
-    END IF;
-    
-    # Get the curren client ID for logging pruposes
-	SELECT get_user_id() INTO id_client;
-    
-    SELECT get_user_compte_acces(id_compte) INTO user_acces;
-	
-    # If everything alright read account
-    IF user_acces = 'lecture' OR user_acces = 'lecture-ecriture' THEN 
-		SET autorized = true;
-	END IF;
-    
-    RETURN autorized;
-END//
 
 /*
 	Affiche l'état d'un compte. 
@@ -216,13 +163,7 @@ CREATE PROCEDURE log_journal(
     solde_result FLOAT
 )
 BEGIN
- /*
-		0 : Succès 
-        1 : Solde insuffisant
-        2 : Max journalier dépassé
-        3 : Lecture non autoriséee
-        4 : Ecriture non autorisée
- */
+
 	INSERT INTO Transactions.journal (date_val, id_compte, id_client, type_operation, autorisation, etat_init, etat_result)
     VALUES (NOW(), id_compte, id_client, type_operation, autorisation, solde_init, solde_result);
 
@@ -251,47 +192,20 @@ DELIMITER //
 CREATE PROCEDURE transferer1(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
 BEGIN
     DECLARE etat FLOAT;
-	DECLARE id_compte INT ;
-    DECLARE etat_before INT;
-    DECLARE id_client INT;
+	
+    SELECT solde INTO etat FROM comptes where comptes.num = cpt1;
+    SET etat = etat - montant;
     
-    # récupère l'id du compte 
-	SELECT id  INTO id_compte FROM comptes where comptes.num = cpt1;
-    # récupère l'id de l'utilisateur
-    SELECT get_user_id() INTO id_client;
+    UPDATE Transactions.comptes
+	SET comptes.solde = etat
+    WHERE comptes.num = cpt1;
+   
+	SELECT solde INTO etat FROM comptes where comptes.num = cpt2;
+    SET etat = etat + montant;
     
-    IF(has_write_acces(id_compte)) THEN
-    
-		SELECT solde INTO etat_before FROM comptes where comptes.num = cpt1;
-		SET etat = etat_before - montant;
-        # save dans le journal
-		CALL log_journal(id_compte, id_client, 'lecture', 0, etat_before, etat_before);
-		
-		UPDATE Transactions.comptes
-		SET comptes.solde = etat
-		WHERE comptes.num = cpt1;
-        # save dans le journal
-        CALL log_journal(id_compte, id_client, 'ecriture', 0, etat_before, etat);
-	   
-       # PEUT-ON TRANSFERER SI ON EST PAS DETENTEUR DU COMPTE ??
-       # SINON EXCEPTION
-		SELECT solde INTO etat_before FROM comptes where comptes.num = cpt2;
-		SET etat = etat_before + montant;
-		# save dans le journal
-		CALL log_journal(id_compte, id_client, 'lecture', 0, etat_before, etat_before);
-        
-		UPDATE Transactions.comptes
-		SET comptes.solde = etat
-		WHERE comptes.num = cpt2;
-		# save dans le journal
-        CALL log_journal(id_compte, id_client, 'ecriture', 0, etat_before, etat);
-        
-    ELSE
-        SELECT solde INTO etat_before FROM comptes where comptes.num = cpt1;
-        
-		CALL log_journal(id_compte, id_client, 'lecture', 4, etat_before, etat_before);
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You don\'t have read access to that account.';
-    END IF;
+	UPDATE Transactions.comptes
+	SET comptes.solde = etat
+    WHERE comptes.num = cpt2;
     
 END //
 
@@ -303,67 +217,42 @@ END //
     cpt1 : compte débité
     cpt2 : compte crédité
     montant : montant à transférer
-    
-    Remarques, par précisé si on gère le droit d'accès. Mais je pense que oui.. à confirmer lundi
 */
 DROP PROCEDURE IF EXISTS transferer2 //
 DELIMITER //
 CREATE PROCEDURE transferer2(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
 BEGIN
-	DECLARE etat FLOAT;  
-	DECLARE id_compte INT ;
-    DECLARE etat_before INT;
-    DECLARE id_client INT;
+	DECLARE etat FLOAT;
     
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
 	DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
-    
-    # récupère l'id du compte 
-	SELECT id  INTO id_compte FROM comptes where comptes.num = cpt1;
-    # récupère l'id de l'utilisateur
-    SELECT get_user_id() INTO id_client;
-    
-    IF(has_write_acces(id_compte)) THEN
-		
-		# 1ère transaction on récupère le solde du compte cpt1 
-		START TRANSACTION;
-			SELECT solde INTO etat FROM comptes where comptes.num = cpt1;
-		COMMIT; 
-		SET etat = etat - montant;
+    		
+	# 1ère transaction on récupère le solde du compte cpt1 
+	START TRANSACTION;
+		SELECT solde INTO etat FROM comptes where comptes.num = cpt1;
+	COMMIT; 
+	SET etat = etat - montant;
 
-		# 2ème transaction on met à jour le solde du compte cpt1 
-		START TRANSACTION;
-			UPDATE Transactions.comptes
-			SET comptes.solde = etat
-			WHERE comptes.num = cpt1;
-		COMMIT;
-		
-		# 3ème transaction on récupère le solde du compte cpt2 
-		START TRANSACTION;
-			SELECT solde INTO etat FROM comptes where comptes.num = cpt2;
-		COMMIT;
-		SET etat = etat + montant;
-		
-		# 4ème transaction on met à jour le solde du compte cpt2 
-		START TRANSACTION;
-			UPDATE Transactions.comptes
-			SET comptes.solde = etat
-			WHERE comptes.num = cpt2;
-		COMMIT;
-        
-    ELSE 
+	# 2ème transaction on met à jour le solde du compte cpt1 
+    START TRANSACTION;
+		UPDATE Transactions.comptes
+		SET comptes.solde = etat
+		WHERE comptes.num = cpt1;
+	COMMIT;
+	
+    # 3ème transaction on récupère le solde du compte cpt2 
+	START TRANSACTION;
+		SELECT solde INTO etat FROM comptes where comptes.num = cpt2;
+	COMMIT;
+	SET etat = etat + montant;
     
-		START TRANSACTION;
-			SELECT solde INTO etat_before FROM comptes where comptes.num = cpt1;
-        COMMIT;
-        
-        START TRANSACTION;
-			CALL log_journal(id_compte, id_client, 'lecture', 4, etat_before, etat_before);
-        COMMIT;
-        
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You don\'t have read access to that account.';
-        
-    END IF;
+    # 4ème transaction on met à jour le solde du compte cpt2 
+	START TRANSACTION;
+		UPDATE Transactions.comptes
+		SET comptes.solde = etat
+		WHERE comptes.num = cpt2;
+	COMMIT;
+    
 END //
 
 /*
@@ -374,28 +263,16 @@ END //
     cpt1 : compte débité
     cpt2 : compte crédité
     montant : montant à transférer
-    
-    Remarques, par précisé si on gère le droit d'accès. Mais je pense que oui.. à confirmer lundi
 */
 DROP PROCEDURE IF EXISTS transferer3 //
 DELIMITER //
 CREATE PROCEDURE transferer3(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
 BEGIN
 	DECLARE etat FLOAT;
-	DECLARE id_compte INT ;
-    DECLARE etat_before INT;
-    DECLARE id_client INT;
     
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
 	DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
 		
-	    # récupère l'id du compte 
-	SELECT id  INTO id_compte FROM comptes where comptes.num = cpt1;
-    # récupère l'id de l'utilisateur
-    SELECT get_user_id() INTO id_client;
-    
-    IF(has_write_acces(id_compte)) THEN
-    
 	# 1ère transaction on récupère le solde du compte cpt1 
     # Pose le verrou de lecture 
 	START TRANSACTION;
@@ -427,19 +304,7 @@ BEGIN
 		SET comptes.solde = etat
 		WHERE comptes.num = cpt2;
 	COMMIT;
-    ELSE
     
-		START TRANSACTION;
-			SELECT solde INTO etat_before FROM comptes where comptes.num = cpt1  lock in share mode;
-        COMMIT;
-        
-        START TRANSACTION;
-			CALL log_journal(id_compte, id_client, 'lecture', 4, etat_before, etat_before);
-        COMMIT;
-        
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'You don\'t have read access to that account.';
-        
-    END IF;
 END //
 
 /*
@@ -450,8 +315,6 @@ END //
     cpt1 : compte débité
     cpt2 : compte crédité
     montant : montant à transférer
-    
-    Remarques, par précisé si on gère le droit d'accès. Mais je pense que oui.. à confirmer lundi
 */
 
 DELIMITER ;
