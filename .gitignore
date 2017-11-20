@@ -5,3 +5,15 @@
 /MAC_labo2_part2/test/
 /MAC_labo2_part2/*.xml
 /MAC_labo2_part2/manifest.mf
+
+# latex
+rapport/*.log
+rapport/*.lof
+rapport/*.aux
+rapport/*.gz
+rapport/*.lot
+rapport/*.out
+rapport/*.bbl
+rapport/*.blg
+rapport/*.toc
+rapport/*.pdf

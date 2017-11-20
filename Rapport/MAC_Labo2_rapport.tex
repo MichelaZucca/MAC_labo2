@@ -1,0 +1,169 @@
+% -----------------------------------------------------------------------
+% --- DOCUMENTS ---
+% -----------------------------------------------------------------------
+\documentclass[francais,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{ae, pslatex}
+\usepackage[french]{babel}
+\selectlanguage{french} 
+
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{pgfplots}
+\usepackage{caption}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+}
+
+\usepackage{titlesec}
+\usepackage{color}
+\usepackage{colortbl}
+
+\usepackage{hhline,tabu}
+
+\frenchbsetup{StandardLists=true}
+
+% -----------------------------------------------------------------------
+% --- CODE JAVA ---
+% -----------------------------------------------------------------------
+\usepackage{listings} % pour afficher du code
+\definecolor{mauve}{rgb}{0.472,0.035,0.218}
+\definecolor{darkGreen}{rgb}{0.0429,0.601,0.0117}
+\definecolor{antiFlashWite}{rgb}{0.95,0.95,0.96}
+
+
+\lstdefinelanguage{Java}{
+	morekeywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, let,this},
+	morecomment=[s]{/*}{*/},
+	morecomment=[l]//,
+	morestring=[b]",
+	morestring=[b]',
+	morestring=[s]{/[}{/;}
+}
+
+\lstdefinestyle{javaCode}
+{
+	% language related
+	language=Java,
+	keywordstyle=\color{blue},
+	commentstyle=\color{green},
+	stringstyle=\color{mauve},
+	basicstyle=\footnotesize\ttfamily, % Standardschrift
+	numbers=left,               % Ort der Zeilennummern
+	numberstyle=\tiny,          % Stil der Zeilennummern
+	stepnumber=2,               % Abstand zwischen den Zeilennummern
+	numbersep=5pt,              % Abstand der Nummern zum Text
+	tabsize=4,                  % Groesse von Tabs
+	extendedchars=true,         %
+	breaklines=true,            % Zeilen werden Umgebrochen
+	keywordstyle=\color{blue}\bfseries,
+	frame=b,
+	showspaces=false,           % Leerzeichen anzeigen ?
+	showtabs=false,             % Tabs anzeigen ?
+	xleftmargin=17pt,
+	framexleftmargin=17pt,
+	framexrightmargin=5pt,
+	framexbottommargin=4pt,
+	backgroundcolor=\color{antiFlashWite},
+	showstringspaces=false,      % Leerzeichen in Strings anzeigen ?
+}
+
+% -----------------------------------------------------------------------
+% --- MARGES ---sp
+% -----------------------------------------------------------------------
+\usepackage{vmargin}
+\setpapersize{A4}
+\setmarginsrb{60pt}{50pt}{60pt}{25pt}{15pt}{25pt}{15pt}{25pt}
+
+% -----------------------------------------------------------------------
+% --- EN-TETE ET PIED DE PAGE ---
+% -----------------------------------------------------------------------
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\pagestyle{fancy}
+
+\fancyhead[L]{MAC - Applications multi-tiers}
+\fancyhead[R]{IL - TIC - HEIG-VD \\ Automne 2017}
+\fancyfoot[C]{\thepage{}}
+
+\title{Applications multi-tiers \\ Laboratoire n\textordmasculine2 : Transactions}
+\author{Mathieu Monteverde, Sathiya Kirushnapillai, Michela Zucca}
+\date{Automne 2017}
+
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+
+% ***********************************************************************
+% *** DOCUMENT PRINCIPAL ***
+% ***********************************************************************
+\begin{document}
+	
+	\maketitle
+	
+	\setlength{\parskip}{1em}
+	
+	\section*{Codes implémentés}
+	présenter les codes développés en expliquant commentant leur structure et leurs particularités
+	\section*{Tests réalisés}
+	\subsection*{Mode non transactionnel}
+	avec transférer1
+	
+		\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		 Action & inter-blocage & cohérence & temps exécution & Compte 1 & Compte 2\\
+		\hline
+		\rowcolor{lightgray}\multicolumn{6}{|l|}{transférer1}\\
+		\hline
+		 & & & & &\\
+		\hline
+	\end{tabular}
+	
+	
+	\subsection*{Mode transactionnel}
+	avec transférer2, tranférer3 et transférer4\\
+	4 modes d'isolation\\
+	Read Uncommitted, REad Committed, Repeated REad et Serializable
+	
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Mode transactionnel & inter-blocage & cohérence & temps exécution & Compte 1 & Compte 2\\
+		\hline
+		\rowcolor{lightgray}\multicolumn{6}{|l|}{transférer2}\\
+		\hline
+		Read Uncommitted  & & & & &\\
+		\hline
+		Read Committed   & & & & &\\
+		\hline
+		Repeated Read  & & & & &\\
+		\hline
+		Serializable  & & & & &\\
+		\hline
+		\rowcolor{lightgray}\multicolumn{6}{|l|}{transférer3}\\
+		\hline
+		Read Uncommitted  & & & & &\\
+		\hline
+		Read Committed  & & & & &\\
+		\hline
+		Repeated Read   & & & & &\\
+		\hline
+		Serializable   & & & & &\\
+		\hline
+		\rowcolor{lightgray}\multicolumn{6}{|l|}{transférer4}\\
+		\hline
+		Read Uncommitted  & & & & &\\
+		\hline
+		Read Committed  & & & & &\\
+		\hline
+		Repeated Read  & & & & &\\
+		\hline
+		Serializable  & & & & &\\
+		\hline	
+	\end{tabular}
+
+\end{document}
