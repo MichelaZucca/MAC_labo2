@@ -114,5 +114,23 @@ public class MAC_labo2_part2 {
 
         System.exit(0);
     }
+    
+    /*
+    Liste des opérations possibles 
+    
+    Procédures :
+    lire_etat_compte(id_compte INT)
+    deposer_sur_compte (id_compte INT, montant FLOAT)
+    transferer1(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
+    transferer2(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
+    transferer3(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
+    transferer4(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
+    
+    Fonctions :
+    has_write_acces(id_compte INT)
+    has_read_acces(id_compte INT)
+    get_user_id ()
+    get_user_compte_acces (id_compte INT)
+    */
 
 }
