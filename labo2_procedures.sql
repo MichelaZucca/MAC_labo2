@@ -230,24 +230,18 @@ BEGIN
 	# 1ère transaction on récupère le solde du compte cpt1 
 	START TRANSACTION;
 		SELECT solde INTO etat FROM comptes where comptes.num = cpt1;
-	COMMIT; 
-	SET etat = etat - montant;
+		SET etat = etat - montant;
 
 	# 2ème transaction on met à jour le solde du compte cpt1 
-    START TRANSACTION;
 		UPDATE Transactions.comptes
 		SET comptes.solde = etat
 		WHERE comptes.num = cpt1;
-	COMMIT;
 	
     # 3ème transaction on récupère le solde du compte cpt2 
-	START TRANSACTION;
-		SELECT solde INTO etat FROM comptes where comptes.num = cpt2;
-	COMMIT;
-	SET etat = etat + montant;
+		SELECT solde INTO etat FROM comptes where comptes.num = cpt2;	
+		SET etat = etat + montant;
     
     # 4ème transaction on met à jour le solde du compte cpt2 
-	START TRANSACTION;
 		UPDATE Transactions.comptes
 		SET comptes.solde = etat
 		WHERE comptes.num = cpt2;
@@ -273,36 +267,28 @@ BEGIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
 	DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
 		
-	# 1ère transaction on récupère le solde du compte cpt1 
-    # Pose le verrou de lecture 
 	START TRANSACTION;
-		SELECT solde INTO etat FROM comptes where comptes.num = cpt1 lock in share mode;
-	COMMIT; 
+	# 1ère transaction on récupère le solde du compte cpt1 
+	# Pose le verrou de lecture et écriture
+	SELECT solde FROM comptes WHERE comptes.num = cpt1 FOR UPDATE;
 	SET etat = etat - montant;
 
-	# 2ème transaction on met à jour le solde du compte cpt1 
-    # Pose le verrou d'ecriture 
-    SELECT solde FROM comptes WHERE comptes.num = cpt1 FOR UPDATE;
-    START TRANSACTION;
-		UPDATE Transactions.comptes
-		SET comptes.solde = etat
-		WHERE comptes.num = cpt1;
-	COMMIT;
-	
+	# 2ème transaction on met à jour le solde du compte cpt1
+	UPDATE Transactions.comptes
+	SET comptes.solde = etat
+	WHERE comptes.num = cpt1;
+
     # 3ème transaction on récupère le solde du compte cpt2 
-    # Pose le verrou de lecture 
-	START TRANSACTION;
-		SELECT solde INTO etat FROM comptes where comptes.num = cpt2 lock in share mode;
-	COMMIT;
+    # Pose le verrou de lecture et écriture
+	SELECT solde FROM comptes WHERE comptes.num = cpt2 FOR UPDATE;	
 	SET etat = etat + montant;
     
     # 4ème transaction on met à jour le solde du compte cpt2 
-	# Pose le verrou d'ecriture 
-    SELECT solde FROM comptes WHERE comptes.num = cpt2 FOR UPDATE;
-	START TRANSACTION;
-		UPDATE Transactions.comptes
-		SET comptes.solde = etat
-		WHERE comptes.num = cpt2;
+	UPDATE Transactions.comptes
+	SET comptes.solde = etat
+	WHERE comptes.num = cpt2;
+    
+    # fin de transaction
 	COMMIT;
     
 END //
@@ -315,6 +301,10 @@ END //
     cpt1 : compte débité
     cpt2 : compte crédité
     montant : montant à transférer
+*/
+
+/*
+	Verrou sur toute la ligne du compte A et B, avec gestion d'un ordre prioritaire quand on recoit les comptes. Ordre croissant d'id du compte.
 */
 
 DELIMITER ;
