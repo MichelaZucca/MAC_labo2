@@ -187,15 +187,14 @@ END //
 /*
   Pas de commit automatique
 */
-#set @@autocommit=0;
+set @@autocommit=0;
+
 
 /*
   Transferts d'un montant entre 2 comptes, aucune protection
   cpt1 : compte débité
   cpt2 : compte crédité
   montant : montant à transférer
-  
-  Remarques, par précisé si on gère le droit d'accès. Mais je pense que oui.. à confirmer lundi
 */
 DROP PROCEDURE IF EXISTS transferer1 //
 DELIMITER //
@@ -203,20 +202,29 @@ CREATE PROCEDURE transferer1(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
 BEGIN
   DECLARE etat FLOAT;
   
-  SELECT solde INTO etat FROM comptes where comptes.num = cpt1;
+  -- On récupère le solde du compte cpt1 
+  SELECT solde INTO etat 
+  FROM comptes 
+  WHERE comptes.num = cpt1;
   SET etat = etat - montant;
   
+  -- On met à jour le solde du compte cpt1 
   UPDATE Transactions.comptes
   SET comptes.solde = etat
   WHERE comptes.num = cpt1;
-   
-  SELECT solde INTO etat FROM comptes where comptes.num = cpt2;
+  
+  -- On récupère le solde du compte cpt2 
+  SELECT solde INTO etat 
+  FROM comptes 
+  WHERE comptes.num = cpt2;
   SET etat = etat + montant;
-    
+  
+  -- On met à jour le solde du compte cpt2 
   UPDATE Transactions.comptes
   SET comptes.solde = etat
   WHERE comptes.num = cpt2;
 END //
+
 
 /*
   Transferts d'un montant entre 2 comptes, en mode transactionnel, 
@@ -232,30 +240,35 @@ DELIMITER //
 CREATE PROCEDURE transferer2(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
 BEGIN
   DECLARE etat FLOAT;
-    
+
   DECLARE EXIT HANDLER FOR SQLEXCEPTION ROLLBACK;
   DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
-        
-  -- 1ère transaction on récupère le solde du compte cpt1 
+
   START TRANSACTION;
-    SELECT solde INTO etat FROM comptes where comptes.num = cpt1;
+    -- On récupère le solde du compte cpt1 
+    SELECT solde INTO etat 
+    FROM comptes 
+    WHERE comptes.num = cpt1;
     SET etat = etat - montant;
 
-    -- 2ème transaction on met à jour le solde du compte cpt1 
+    -- On met à jour le solde du compte cpt1 
     UPDATE Transactions.comptes
     SET comptes.solde = etat
     WHERE comptes.num = cpt1;
 
-    -- 3ème transaction on récupère le solde du compte cpt2 
-    SELECT solde INTO etat FROM comptes where comptes.num = cpt2;	
+    -- On récupère le solde du compte cpt2 
+    SELECT solde INTO etat 
+    FROM comptes 
+    WHERE comptes.num = cpt2;
     SET etat = etat + montant;
     
-    -- 4ème transaction on met à jour le solde du compte cpt2 
+    -- On met à jour le solde du compte cpt2 
     UPDATE Transactions.comptes
     SET comptes.solde = etat
     WHERE comptes.num = cpt2;
   COMMIT;
 END //
+
 
 /*
   Transferts d'un montant entre 2 comptes, en travaillant en mode transactionnel, mais en opérant par vos 
@@ -276,32 +289,35 @@ BEGIN
   DECLARE EXIT HANDLER FOR SQLWARNING ROLLBACK;
     
   START TRANSACTION;
-  -- 1ère transaction on récupère le solde du compte cpt1 
-  -- Pose le verrou de lecture et écriture
-  SELECT solde INTO etat FROM comptes WHERE comptes.num = cpt1 FOR UPDATE;
-  SET etat = etat - montant;
-
-  -- 2ème transaction on met à jour le solde du compte cpt1
-  UPDATE Transactions.comptes
-  SET comptes.solde = etat
-  WHERE comptes.num = cpt1;
-
-    -- 3ème transaction on récupère le solde du compte cpt2 
+    -- On récupère le solde du compte cpt1 
     -- Pose le verrou de lecture et écriture
-  SELECT solde INTO etat FROM comptes WHERE comptes.num = cpt2 FOR UPDATE;	
-  SET etat = etat + montant;
-    
-    -- 4ème transaction on met à jour le solde du compte cpt2 
-  UPDATE Transactions.comptes
-  SET comptes.solde = etat
-  WHERE comptes.num = cpt2;
-    
-    -- fin de transaction
+    SELECT solde INTO etat 
+    FROM comptes 
+    WHERE comptes.num = cpt1 FOR UPDATE;
+    SET etat = etat - montant;
+
+    -- On met à jour le solde du compte cpt1
+    UPDATE Transactions.comptes
+    SET comptes.solde = etat
+    WHERE comptes.num = cpt1;
+
+    -- On récupère le solde du compte cpt2 
+    -- Pose le verrou de lecture et écriture
+    SELECT solde INTO etat 
+    FROM comptes 
+    WHERE comptes.num = cpt2 FOR UPDATE;	
+    SET etat = etat + montant;
+      
+    -- On met à jour le solde du compte cpt2 
+    UPDATE Transactions.comptes
+    SET comptes.solde = etat
+    WHERE comptes.num = cpt2;
   COMMIT;
 END //
 
+
 /*
-	Transferts d'un montant entre 2 comptes, en travaillant en mode transactionnel, mais en opérant par vos 
+  Transferts d'un montant entre 2 comptes, en travaillant en mode transactionnel, mais en opérant par vos 
     soins un verrouillage explicite des données sensibles en obéissant au « verrouillage en deux phases », 
     en verrouillant le plus tard possible.    
     
@@ -311,10 +327,8 @@ END //
 */
 
 /*
-	Verrou sur toute la ligne du compte A et B, avec gestion d'un ordre prioritaire quand on recoit les comptes. Ordre croissant d'id du compte.
+  Verrou sur toute la ligne du compte A et B, avec gestion d'un ordre prioritaire quand on recoit les comptes. Ordre croissant d'id du compte.
 */
-
-DELIMITER ;
 
 
 
