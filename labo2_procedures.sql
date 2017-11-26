@@ -328,9 +328,9 @@ END //
 /*
   Verrou sur toute la ligne du compte A et B, avec gestion d'un ordre prioritaire quand on recoit les comptes. Ordre croissant d'id du compte.
 */
-DROP PROCEDURE IF EXISTS transferer3 //
+DROP PROCEDURE IF EXISTS transferer4 //
 DELIMITER //
-CREATE PROCEDURE transferer3(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
+CREATE PROCEDURE transferer4(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
 BEGIN
   DECLARE etat FLOAT;
   DECLARE cptTemp VARCHAR(30);
