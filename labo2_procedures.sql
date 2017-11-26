@@ -270,7 +270,7 @@ BEGIN
 	START TRANSACTION;
 	# 1ère transaction on récupère le solde du compte cpt1 
 	# Pose le verrou de lecture et écriture
-	SELECT solde FROM comptes WHERE comptes.num = cpt1 FOR UPDATE;
+	SELECT solde INTO etat FROM comptes WHERE comptes.num = cpt1 FOR UPDATE;
 	SET etat = etat - montant;
 
 	# 2ème transaction on met à jour le solde du compte cpt1
@@ -280,7 +280,7 @@ BEGIN
 
     # 3ème transaction on récupère le solde du compte cpt2 
     # Pose le verrou de lecture et écriture
-	SELECT solde FROM comptes WHERE comptes.num = cpt2 FOR UPDATE;	
+	SELECT solde INTO etat FROM comptes WHERE comptes.num = cpt2 FOR UPDATE;	
 	SET etat = etat + montant;
     
     # 4ème transaction on met à jour le solde du compte cpt2 
