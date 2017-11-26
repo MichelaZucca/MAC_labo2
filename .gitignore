@@ -1,10 +1,10 @@
 /MAC_labo2_part2/nbproject/private/
 /MAC_labo2_part2/build/
 /MAC_labo2_part2/dist/
-/MAC_labo2_part2/nbproject/
-/MAC_labo2_part2/test/
-/MAC_labo2_part2/*.xml
-/MAC_labo2_part2/manifest.mf
+/MAC_labo2_part2/nbbuild/
+/MAC_labo2_part2/nbdist/
+.DS_Store
+*/.DS_Store
 
 # latex
 rapport/*.log
