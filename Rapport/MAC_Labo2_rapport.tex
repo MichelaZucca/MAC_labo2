@@ -4,6 +4,7 @@
 \documentclass[11pt, a4paper, french, twoside]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{ae, pslatex}
+\usepackage{listingsutf8}
 \usepackage[french]{babel}
 \selectlanguage{french} 
 
@@ -106,6 +107,7 @@
     \subsection{SQL}
     Pour ce laboratoire, nous avons désactivé l'auto-commit par défaut de MySQL. Ainsi, nous devons gérer nous-même chaque transaction. 
     
+    \lstset{inputencoding=utf8/latin1}
 	\lstinputlisting[language=SQL,firstline=190,lastline=191]{../labo2_procedures.sql}
     
     \subsubsection*{Transfert 1}
