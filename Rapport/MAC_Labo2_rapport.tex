@@ -111,11 +111,17 @@
     \lstinputlisting[language=SQL,firstline=201,lastline=227]{../labo2_procedures.sql}
     
     \subsubsection*{Transfert 2}
-    Pour ce transfert, nous devons travaillé en mode transactionnel à l'aide de l'encadrement \og start transaction commit \fg. Aucun verrouillage a été implémenté.
+    Pour ce transfert, nous avons un code identique au premier transfert ci-dessus. La seule différence est que nous travaillons en mode transactionnel à l'aide de l'encadrement \og start transaction commit \fg. Aucun verrouillage n'a été implémenté.
     
     \lstinputlisting[language=SQL,firstline=238,lastline=267]{../labo2_procedures.sql}
     
+    
     \subsubsection*{Transfert 3}
+    Le code ci-dessous est identique au second transfert. Cependant, nous devons implémenter un verouillage explicite des données sensibles en obéissant au \og verrouillage en deux phases, en verrouillant le plus tard possible. \fg
+    
+    Pour le verrouillage, on utilise \textit{FOR UPDATE}.
+    
+    \lstinputlisting[language=SQL,firstline=279,lastline=310]{../labo2_procedures.sql}
     
     \subsubsection*{Transfert 4}
     
