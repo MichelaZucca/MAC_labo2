@@ -112,7 +112,7 @@ public class TransfertMultiple {
                // Do all transfers
                for (int i = 0; i < nbOfTransfers; ++i) {
                   try {
-                     transferStatement.executeQuery();
+                     transferStatement.execute();
                   } catch (SQLException ex) {
                      // If the cause of the exception was a deadlock
                      if (ex.getSQLState().equals("40001")) {

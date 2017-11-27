@@ -220,6 +220,7 @@
     \end{tabular}
 
 	\subsubsection{Analyse}
+	On remarque en effet que sans verrouillage explicite, seul le mode d'isolation SERIALIZABLE assure la cohérence des données. Nous remarquons également que le nombre d'interblocages est légérement plus élevé. En revanche, concernant les temps d'exécution, on ne remarque pas une nette différence entre les différents modes.
 
 	\subsubsection{Procédure transferer3}
 	Le tableau ci-dessous liste et permet de comparer les différents résultats obtenus des tests de la procédure transferer3.
@@ -250,9 +251,9 @@
 	\end{tabular}
 
 	\subsubsection{Analyse}
-    Nous pouvons voir dans le tableau ci-dessus que les données sont cohérents pour tous les modes d'isolations. Il y a eu autant d'inter-blocage que la procédure transfert2.
+    Nous pouvons voir dans le tableau ci-dessus que les données sont cohérentes pour tous les modes d'isolations. Il y a eu autant d'interblocages que la procédure transfert2.
     
-    Les temps d'exécution ne vont pas du plus rapide au plus lent. Nous ne pouvons pas les comparer.
+    Les temps d'exécution ne sont pas du plus rapides ou plus lents. Nous ne pouvons pas les comparer.
 
 	\subsubsection{Procédure transferer4}
 	Le tableau ci-dessous liste et permet de comparer les différents résultats obtenus des tests de la procédure transferer4.
@@ -282,8 +283,8 @@
 	\end{tabular}
     
     \subsubsection{Analyse}
-    Dans cette partie, nous pouvons voir qu'il y a eu aucun inter-blocage et que tous les comptes sont cohérents. Le temps moyen d'exécution est du plus rapide au plus lent. Sauf pour Serializable qui a été un peu plus rapide que Read Committed et Repeatable Read. Mais la différence n'est pas flagrante.
+    Dans cette partie, nous pouvons voir qu'il y a eu aucun interblocage et que tous les comptes sont cohérents. Le temps moyen d'exécution est du plus rapide au plus lent. Sauf pour Serializable qui a été un peu plus rapide que Read Committed et Repeatable Read. Mais la différence n'est pas flagrante.
     
-    Cependant, les temps moyen d'exécution sont nettement meilleur que la procédure transfert2 et transfert3. Étant donné qu'il n'y a pas d'inter-blocage, nous perdons pas de temps à refaire les opérations annulées.
+    Cependant, les temps moyens d'exécution sont nettement meilleurs que la procédure transfert2 et transfert3. Étant donné qu'il n'y a pas d'inter-blocage, nous perdons pas de temps à refaire les opérations annulées.
 
 \end{document}

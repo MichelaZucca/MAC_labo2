@@ -1,4 +1,4 @@
-﻿use Transactions;
+USE Transactions;
 
 
 /*
@@ -187,7 +187,6 @@ END //
 /*
   Pas de commit automatique
 */
-set @@autocommit=0;
 
 
 /*
