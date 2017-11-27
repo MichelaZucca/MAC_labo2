@@ -328,18 +328,16 @@ DELIMITER //
 CREATE PROCEDURE transferer4(cpt1 VARCHAR(30), cpt2 VARCHAR(30), montant FLOAT)
 BEGIN
   DECLARE etat FLOAT;
-  DECLARE cptTemp VARCHAR(30);
     
   START TRANSACTION;
     -- Inverser les 2 comptes, priorité au nom du compte le plus petit
-    IF(cpt2 < cpt1) THEN
-		SET cptTemp = cpt1;
-        SET cpt1 = cpt2;
-        SET cpt2 = cptTemp;
+    IF(cpt1 < cpt2) THEN
+	  SELECT * FROM comptes WHERE comptes.num = cpt1 FOR UPDATE;
+      SELECT * FROM comptes WHERE comptes.num = cpt2 FOR UPDATE;
+	ELSE
+      SELECT * FROM comptes WHERE comptes.num = cpt2 FOR UPDATE;
+      SELECT * FROM comptes WHERE comptes.num = cpt1 FOR UPDATE;
     END IF;
-    
-    SELECT * FROM comptes WHERE comptes.num = cpt1 FOR UPDATE;
-    SELECT * FROM comptes WHERE comptes.num = cpt2 FOR UPDATE;
 
     -- On récupère le solde du compte cpt1 
     -- Pose le verrou de lecture et écriture
