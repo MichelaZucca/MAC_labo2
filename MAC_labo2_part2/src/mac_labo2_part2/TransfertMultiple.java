@@ -90,6 +90,9 @@ public class TransfertMultiple {
          // Prepare the statement
          final String TRANSFER_STATEMENT = "CALL " + procedure + "(?, ?, ?);";
          transferStatement = conSQL.prepareStatement(TRANSFER_STATEMENT);
+         transferStatement.setString(1, account1);
+         transferStatement.setString(2, account2);
+         transferStatement.setInt(3, amount);
 
          Thread executionThread = new Thread(new Runnable() {
             @Override
@@ -100,9 +103,6 @@ public class TransfertMultiple {
                // Do all transfers
                for (int i = 0; i < nbOfTransfers; ++i) {
                   try {
-                     transferStatement.setString(1, account1);
-                     transferStatement.setString(2, account2);
-                     transferStatement.setInt(3, amount);
                      transferStatement.executeQuery();
                   } catch (SQLException ex) {
                      // If the cause of the exception was a deadlock
