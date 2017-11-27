@@ -46,7 +46,8 @@ public class TransfertMultiple {
 
    // execution time
    private long executionTime;
-
+   
+   // Number of accepted deadlocks before admitting something is going wrong...
    public static long MAX_DEADLOCK = 6000;
 
    /**
