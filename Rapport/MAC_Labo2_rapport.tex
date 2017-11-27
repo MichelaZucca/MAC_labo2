@@ -98,37 +98,40 @@
 \begin{document}
 	
 	\maketitle
+    
+    \tableofcontents
 	
 	\setlength{\parskip}{1em}
 	
 	\section{Codes implémentés}
-    
+
     \subsection{SQL}
     Pour ce laboratoire, nous avons désactivé l'auto-commit par défaut de MySQL. Ainsi, nous devons gérer nous-même chaque transaction. 
     
 	\lstinputlisting[language=SQL,firstline=190,lastline=191]{../labo2_procedures.sql}
     
-    \subsubsection*{Transfert 1}
+    \subsubsection{Transfert 1}
     Nous devons réaliser ce premier transfert sans encadrement \og start transaction commit \fg. Il n'y a rien de particulier à constater. Nous avons simplement rédiger ce code à l'aide du pseudo-code présenté dans la données du laboratoire.
     
     \lstinputlisting[language=SQL,firstline=201,lastline=227]{../labo2_procedures.sql}
     
-    \subsubsection*{Transfert 2}
+    \subsubsection{Transfert 2}
     Pour ce transfert, nous avons un code identique au premier transfert ci-dessus. La seule différence est que nous travaillons en mode transactionnel à l'aide de l'encadrement \og start transaction commit \fg. Aucun verrouillage n'a été implémenté.
     
-    \lstinputlisting[language=SQL,firstline=238,lastline=267]{../labo2_procedures.sql}
+    \lstinputlisting[language=SQL,firstline=240,lastline=267]{../labo2_procedures.sql}
     
     
-    \subsubsection*{Transfert 3}
+    \subsubsection{Transfert 3}
     Le code ci-dessous est identique au second transfert. Cependant, nous devons implémenter un verouillage explicite des données sensibles en obéissant au \og verrouillage en deux phases, en verrouillant le plus tard possible. \fg
     
     Pour le verrouillage, on utilise \textit{FOR UPDATE}.
     
-    \lstinputlisting[language=SQL,firstline=279,lastline=310]{../labo2_procedures.sql}
+    \lstinputlisting[language=SQL,firstline=281,lastline=310]{../labo2_procedures.sql}
     
-    \subsubsection*{Transfert 4}
+    \subsubsection{Transfert 4}
+    Cette fois nous opérant un verrouillage des données sensibles en prévenant tout risque d'inter-blocage. On utilise la méthode d'ordonnancement vue en cours. Ainsi, nous ordonnons à l'aide du numéro de compte.
     
-    
+    \lstinputlisting[language=SQL,firstline=328,lastline=366]{../labo2_procedures.sql}
     
 	\section{Tests réalisés}
     
