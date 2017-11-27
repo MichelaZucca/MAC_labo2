@@ -1,0 +1,319 @@
+==================================
+transferer1 in mode REPEATABLE READ
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to REPEATABLE-READ
+Isolation mode was set to REPEATABLE-READ
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : -1700.0
+id 2 num : 2 solde : -2350.0
+
+U1:
+Interblocages: 0
+Temps d'exécution: 2767
+
+U2:
+Interblocages: 0
+Temps d'exécution: 2773
+
+
+
+==================================
+transferer2 in mode REPEATABLE READ
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to REPEATABLE-READ
+Isolation mode was set to REPEATABLE-READ
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : 1450.0
+id 2 num : 2 solde : -450.0
+
+U1:
+Interblocages: 1783
+Temps d'exécution: 4390
+
+U2:
+Interblocages: 1489
+Temps d'exécution: 4152
+
+
+
+==================================
+transferer2 in mode READ COMMITTED
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to READ-COMMITTED
+Isolation mode was set to READ-COMMITTED
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : -2700.0
+id 2 num : 2 solde : -2350.0
+
+U1:
+Interblocages: 1412
+Temps d'exécution: 3705
+
+U2:
+Interblocages: 1833
+Temps d'exécution: 4018
+
+
+
+
+
+==================================
+transferer2 in mode READ UNCOMMITTED
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to READ-UNCOMMITTED
+Isolation mode was set to READ-UNCOMMITTED
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : -92100.0
+id 2 num : 2 solde : -82050.0
+
+U1:
+Interblocages: 1905
+Temps d'exécution: 4215
+
+U2:
+Interblocages: 1687
+Temps d'exécution: 4057
+
+
+
+
+
+==================================
+transferer2 in mode SERIALIZABLE
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to SERIALIZABLE
+Isolation mode was set to SERIALIZABLE
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+
+U1:
+Interblocages: 1817
+Temps d'exécution: 3886
+
+U2:
+Interblocages: 1968
+Temps d'exécution: 3996
+
+
+
+==================================
+transferer3 in mode REPEATABLE READ
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to REPEATABLE-READ
+Isolation mode was set to REPEATABLE-READ
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+
+U1:
+Interblocages: 1716
+Temps d'exécution: 3949
+
+U2:
+Interblocages: 1686
+Temps d'exécution: 3927
+
+
+
+
+==================================
+transferer3 in mode READ COMMITTED
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to READ-COMMITTED
+Isolation mode was set to READ-COMMITTED
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+
+U1:
+Interblocages: 1445
+Temps d'exécution: 3818
+
+U2:
+Interblocages: 1591
+Temps d'exécution: 3925
+
+
+==================================
+transferer3 in mode READ UNCOMMITTED
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to READ-UNCOMMITTED
+Isolation mode was set to READ-UNCOMMITTED
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+
+U1:
+Interblocages: 1774
+Temps d'exécution: 4116
+
+U2:
+Interblocages: 1606
+Temps d'exécution: 3988
+
+
+
+==================================
+transferer3 in mode SERIALIZABLE
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to SERIALIZABLE
+Isolation mode was set to SERIALIZABLE
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+
+U1:
+Interblocages: 1631
+Temps d'exécution: 3948
+
+U2:
+Interblocages: 1581
+Temps d'exécution: 3897
+
+
+==================================
+transferer4 in mode REPEATABLE READ
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to REPEATABLE-READ
+Isolation mode was set to REPEATABLE-READ
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+
+U1:
+Interblocages: 0
+Temps d'exécution: 2854
+
+U2:
+Interblocages: 0
+Temps d'exécution: 2856
+
+
+
+
+
+==================================
+transferer4 in mode READ COMMITTED
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to READ-COMMITTED
+Isolation mode was set to READ-COMMITTED
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+
+U1:
+Interblocages: 0
+Temps d'exécution: 2819
+
+U2:
+Interblocages: 0
+Temps d'exécution: 2821
+
+
+
+
+
+
+
+==================================
+transferer4 in mode READ UNCOMMITTED
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to READ-UNCOMMITTED
+Isolation mode was set to READ-UNCOMMITTED
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+
+U1:
+Interblocages: 0
+Temps d'exécution: 2645
+
+U2:
+Interblocages: 0
+Temps d'exécution: 2646
+
+
+
+
+==================================
+transferer4 in mode SERIALIZABLE
+==================================
+Etat des comptes avant l'expérience: 
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+Isolation mode was set to SERIALIZABLE
+Isolation mode was set to SERIALIZABLE
+Transferring money...
+Finished transferring...
+Etat des comptes...
+id 1 num : 1 solde : 500.0
+id 2 num : 2 solde : 500.0
+
+U1:
+Interblocages: 0
+Temps d'exécution: 2801
+
+U2:
+Interblocages: 0
+Temps d'exécution: 2800

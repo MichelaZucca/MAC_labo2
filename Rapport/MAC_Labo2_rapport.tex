@@ -4,6 +4,7 @@
 \documentclass[11pt, a4paper, french, twoside]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{ae, pslatex}
+\usepackage{listingsutf8}
 \usepackage[french]{babel}
 \selectlanguage{french} 
 
@@ -108,6 +109,7 @@
     \subsection{SQL}
     Pour ce laboratoire, nous avons désactivé l'auto-commit par défaut de MySQL. Ainsi, nous devons gérer nous-même chaque transaction. 
     
+    \lstset{inputencoding=utf8/latin1}
 	\lstinputlisting[language=SQL,firstline=190,lastline=191]{../labo2_procedures.sql}
     
     \subsubsection{Transfert 1}
@@ -127,19 +129,72 @@
     Pour le verrouillage, on utilise \textit{FOR UPDATE}.
     
     \lstinputlisting[language=SQL,firstline=281,lastline=310]{../labo2_procedures.sql}
-    
+
     \subsubsection{Transfert 4}
     Cette fois nous opérant un verrouillage des données sensibles en prévenant tout risque d'inter-blocage. On utilise la méthode d'ordonnancement vue en cours. Ainsi, nous ordonnons à l'aide du numéro de compte.
-    
+
     \lstinputlisting[language=SQL,firstline=328,lastline=366]{../labo2_procedures.sql}
+
+    \subsection{Programme de test Java}
+    Comme indiqué dans la consigne, nous avons développé un programme de test java dont les listings se trouvent ci-dessous. Le but du programme est de tester le déroulement des procédures mentionnées plus haut lorsque plusieurs threads concurrents les appellent en même temps.
     
+    Le programme est composé de deux classes : \textbf{MAC\_labo2\_part2} et \textbf{TransfertMultiple}. La première est le point d'entrée du programme, et son rôle est de lancer successivement les tests des différentes procédures, en utilisant à tour de rôle les différents modes d'isolations possibles (REPEATABLE READ, READ COMMITTED, READ UNCOMMITTED et SERIALIZABLE). Pour ce faire, elle instancie deux objets de la classe \textbf{TransfertMultiple} qui exécuteront dans des threads séparés des appels aux différentes procédures. 
+    
+    La class \textbf{TransfertMultiple} ouvre une connexion à la base de données Transactions dans son constructeur, en utilisant l'utilisateur passé en paramètre (se référer au code source plus bas). La méthode \textit{demarrer} effectue les appels dans un thread créé pour l'occasion. Par souci de commodité, cette classe permet également d'autres actions SQL comme l'affichage de l'état des comptes de la base de données et la réinitialisation du soldes des comptes. 
+    
+    \subsubsection{Listings java}
+    \lstinputlisting[language=Java]{../MAC_labo2_part2/src/mac_labo2_part2/MAC_labo2_part2.java}
+    \lstinputlisting[language=Java]{../MAC_labo2_part2/src/mac_labo2_part2/TransfertMultiple.java}
+
 	\section{Tests réalisés}
+	Les résultats suivants proviennent d'une seule et même exécution du programme de test. Nous avons remarqué des différences dans les temps d'exécution entre les différentes machines et avons choisi d'utiliser la machine la plus rapide. Nous n'avons pas trouvé la cause de ces différences de temps d'exécution qui peuvent, suivant les machines, aller de 3 secondes à presque 10 minutes pour chacune des procédures.
+	
+	Nous avons utilisé un ordinateur MacBook Pro (Early 2015) possédant les caractéristiques suivantes :
+	\begin{itemize}  
+		\item OS : MacOS Sierra version 10.12.6  
+		\item 2.7 GHz Intel Core i5
+	\end{itemize}
+
+	L'installation de la base de données a été faite en utilisant Workbench, en utilisant MySQL avec un moteur de stockage InnoDB.
     
 	\subsection{Mode non transactionnel}
-
+	Le premier test concerne l'exécution de la procédure \textbf{transferer1(...)}. Les résultats du test se trouvent dans le tableau ci-dessous. Le mode d'isolation REPEATED READ a été utilisé car il s'agit du mode par défaut de notre installation MySQL.
+	
+	\subsubsection{Procédure transferer1}
+	
+	\definecolor{BGray}{gray}{0.60}
+	\definecolor{Gray}{gray}{0.85}
+	\newcolumntype{a}{>{\columncolor{Gray}}c}
+	\begin{tabular}{|a|l|l|l|l|}
+		\hline
+		\rowcolor{BGray}
+		& Repeated Read \\
+		\hline
+		Nombre d'interblocages      & 0 \\
+		\hline
+		Temps d'exécution moyen [ms]           & 2770 \\
+		\hline
+		Solde initial compte A      & 500 \\
+		\hline
+		Solde initial compte B      & 500 \\
+		\hline
+		Solde final compte A        & -1700 \\
+		\hline
+		Solde final compte B        & -2350 \\
+		\hline
+	\end{tabular}
+	
+	\subsubsection{Analyse}
+	On remarque évidemment qu'il n'y a pas eu d'interblocage, puisque la procédure en question n'utilise pas de verrous. Comme on pouvait s'y attendre, la cohérence des données n'est pas préservée puisque de l'argent a disparu.
+	
+	On pourra néanmoins utiliser ces temps d'exécution comme valeur étalon pour les tests des autres procédures.
 	
 	\subsection{Mode transactionnel}
-    Le tableau ci-dessous compare les différences entre les différents niveau d'isolation.
+	
+	\subsubsection{Procédure transferer2}
+    Le tableau ci-dessous liste et permet de comparer les différents résultats des tests de la procédure transferer2.
+    
+    
     
     \definecolor{BGray}{gray}{0.60}
     \definecolor{Gray}{gray}{0.85}
@@ -148,21 +203,82 @@
     \begin{tabular}{|a|l|l|l|l|}
         \hline
         \rowcolor{BGray}
-                                    & Read Uncommitted & Read Committed & Repeated Read & Serializable \\
+                                    & Read Uncommitted & Read Committed & Repeatable Read & Serializable \\
         \hline
-        Nombre d'inter-blocage      & & & & \\
+        Nombre moyen d'interblocages      & 1'796 & 1'622 & 1'636 & 1'892 \\
         \hline
-        Temps d'exécution           & & & & \\
+        Temps d'exécution moyen [ms]           & 4'136 & 3'861.5 & 4'271 & 3'941 \\
         \hline
         Solde initial compte A      & 500 & 500 & 500 & 500 \\
         \hline
         Solde initial compte B      & 500 & 500 & 500 & 500 \\
         \hline
-        Solde final compte A        & & & & \\
+        Solde final compte A        & -92'100 & -2'700 & 1'450 & 500 \\
         \hline
-        Solde final compte B        & & & & \\
+        Solde final compte B        & -82'050 & -2'350 & -450 & 500 \\
         \hline
     \end{tabular}
+
+	\subsubsection{Analyse}
+
+	\subsubsection{Procédure transferer3}
+	Le tableau ci-dessous liste et permet de comparer les différents résultats des tests de la procédure transferer3.
+	
+	
+	
+	\definecolor{BGray}{gray}{0.60}
+	\definecolor{Gray}{gray}{0.85}
+	\newcolumntype{a}{>{\columncolor{Gray}}c}
+	
+	\begin{tabular}{|a|l|l|l|l|}
+		\hline
+		\rowcolor{BGray}
+		& Read Uncommitted & Read Committed & Repeatable Read & Serializable \\
+		\hline
+		Nombre moyen d'interblocages      & 1'690 & 1'518 & 1'701 & 1'606 \\
+		\hline
+		Temps moyen d'exécution [ms]         & 4'052 & 3'871.5 & 3'938 & 3'922.5 \\
+		\hline
+		Solde initial compte A      & 500 & 500 & 500 & 500 \\
+		\hline
+		Solde initial compte B      & 500 & 500 & 500 & 500 \\
+		\hline
+		Solde final compte A        & 500 & 500 & 500 & 500 \\
+		\hline
+		Solde final compte B        & 500 & 500 & 500 & 500 \\
+		\hline
+	\end{tabular}
+
+	\subsubsection{Analyse}
+
+
+	\subsubsection{Procédure transferer4}
+	Le tableau ci-dessous liste et permet de comparer les différents résultats des tests de la procédure transferer4.
+	
+	
+	\definecolor{BGray}{gray}{0.60}
+	\definecolor{Gray}{gray}{0.85}
+	\newcolumntype{a}{>{\columncolor{Gray}}c}
+	
+	\begin{tabular}{|a|l|l|l|l|}
+		\hline
+		\rowcolor{BGray}
+		& Read Uncommitted & Read Committed & Repeatable Read & Serializable \\
+		\hline
+		Nombre moyen d'interblocages      & 0 & 0 & 0 & 0 \\
+		\hline
+		Temps moyen d'exécution [ms]           & 2'645.5 & 2'820 & 2'855 & 2'800.5 \\
+		\hline
+		Solde initial compte A      & 500 & 500 & 500 & 500 \\
+		\hline
+		Solde initial compte B      & 500 & 500 & 500 & 500 \\
+		\hline
+		Solde final compte A        & 500 & 500 & 500 & 500 \\
+		\hline
+		Solde final compte B        & 500 & 500 & 500 & 500 \\
+		\hline
+	\end{tabular}
     
+    \subsubsection{Analyse}
 
 \end{document}
