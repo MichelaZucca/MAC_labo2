@@ -53,7 +53,7 @@ public class TransfertMultiple {
 
       // Get a connection to the DB
       Class.forName("com.mysql.jdbc.Driver");
-      conSQL = DriverManager.getConnection("jdbc:mysql://localhost/transactions", username, password);
+      conSQL = DriverManager.getConnection("jdbc:mysql://localhost/Transactions", username, password);
    }
 
    /**
@@ -159,7 +159,7 @@ public class TransfertMultiple {
    public void displayAccountsState() {
       try {
          // SQL Statement
-         PreparedStatement statement = conSQL.prepareStatement("Select * from comptes");
+         PreparedStatement statement = conSQL.prepareStatement("SELECT * FROM comptes");
          ResultSet result = statement.executeQuery();
          
          // Display results
