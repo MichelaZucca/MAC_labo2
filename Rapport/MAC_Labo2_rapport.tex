@@ -1,7 +1,7 @@
 % -----------------------------------------------------------------------
 % --- DOCUMENTS ---
 % -----------------------------------------------------------------------
-\documentclass[francais,12pt]{article}
+\documentclass[11pt, a4paper, french, twoside]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{ae, pslatex}
 \usepackage[french]{babel}
@@ -27,6 +27,8 @@
 
 \frenchbsetup{StandardLists=true}
 
+\usepackage{etoolbox}
+
 
 \usepackage{listings} % pour afficher du code
 \usepackage{color}
@@ -39,6 +41,7 @@
 \lstdefinestyle{mystyle}{  
     commentstyle=\color{codegreen},
     keywordstyle=\color{magenta},
+    backgroundcolor=\color{gray!10},
     numberstyle=\tiny\color{codegray},
     stringstyle=\color{codepurple},
     basicstyle=\footnotesize,
@@ -49,7 +52,11 @@
     numbersep=5pt,                  
     showspaces=false,                
     showstringspaces=false,
-    showtabs=false,                  
+    showtabs=false,
+    framexleftmargin = 1em,
+    framextopmargin = 1em,
+    framexbottommargin=1em, 
+    frame=tb, framerule=0pt,
     tabsize=4
 }
 
@@ -91,11 +98,32 @@
 	
 	\setlength{\parskip}{1em}
 	
-	\section*{Codes implémentés}
-    Pour ce laboratoire, nous avons désactivé l'auto commit par défaut de MySQL.
-	\lstinputlisting[language=SQL,firstline=186,lastline=191]{../labo2_procedures.sql}
+	\section{Codes implémentés}
+    
+    \subsection{SQL}
+    Pour ce laboratoire, nous avons désactivé l'auto-commit par défaut de MySQL. Ainsi, nous devons gérer nous-même chaque transaction. 
+    
+	\lstinputlisting[language=SQL,firstline=190,lastline=191]{../labo2_procedures.sql}
+    
+    \subsubsection*{Transfert 1}
+    Nous devons réaliser ce premier transfert sans encadrement \og start transaction commit \fg. Il n'y a rien de particulier à constater. Nous avons simplement rédiger ce code à l'aide du pseudo-code présenté dans la données du laboratoire.
+    
+    \lstinputlisting[language=SQL,firstline=201,lastline=227]{../labo2_procedures.sql}
+    
+    \subsubsection*{Transfert 2}
+    Pour ce transfert, nous avons un code identique au premier transfert ci-dessus. La seule différence est que nous travaillons en mode transactionnel à l'aide de l'encadrement \og start transaction commit \fg. Aucun verrouillage n'a été implémenté.
+    
+    \lstinputlisting[language=SQL,firstline=238,lastline=267]{../labo2_procedures.sql}
     
     
+    \subsubsection*{Transfert 3}
+    Le code ci-dessous est identique au second transfert. Cependant, nous devons implémenter un verouillage explicite des données sensibles en obéissant au \og verrouillage en deux phases, en verrouillant le plus tard possible. \fg
+    
+    Pour le verrouillage, on utilise \textit{FOR UPDATE}.
+    
+    \lstinputlisting[language=SQL,firstline=279,lastline=310]{../labo2_procedures.sql}
+    
+    \subsubsection*{Transfert 4}
     
     
     
