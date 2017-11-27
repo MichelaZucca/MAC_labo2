@@ -7,6 +7,8 @@
 \usepackage[french]{babel}
 \selectlanguage{french} 
 
+\usepackage[table]{xcolor}
+
 \usepackage{mathtools}
 \usepackage{amssymb}
 \usepackage{pgfplots}
@@ -24,6 +26,7 @@
 \usepackage{colortbl}
 
 \usepackage{hhline,tabu}
+
 
 \frenchbsetup{StandardLists=true}
 
@@ -127,62 +130,36 @@
     
     
     
-	\section*{Tests réalisés}
+	\section{Tests réalisés}
     
-	\subsection*{Mode non transactionnel}
-	avec transférer1
-	
-		\begin{tabular}{|l|l|l|l|l|l|}
-		\hline
-		 Action & inter-blocage & cohérence & temps exécution & Compte 1 & Compte 2\\
-		\hline
-		\rowcolor{lightgray}\multicolumn{6}{|l|}{transférer1}\\
-		\hline
-		 & & & & &\\
-		\hline
-	\end{tabular}
-	
-	
-	\subsection*{Mode transactionnel}
-	avec transférer2, tranférer3 et transférer4\\
-	4 modes d'isolation\\
-	Read Uncommitted, REad Committed, Repeated REad et Serializable
-	
-	\begin{tabular}{|l|l|l|l|l|l|}
-		\hline
-		Mode transactionnel & inter-blocage & cohérence & temps exécution & Compte 1 & Compte 2\\
-		\hline
-		\rowcolor{lightgray}\multicolumn{6}{|l|}{transférer2}\\
-		\hline
-		Read Uncommitted  & & & & &\\
-		\hline
-		Read Committed   & & & & &\\
-		\hline
-		Repeated Read  & & & & &\\
-		\hline
-		Serializable  & & & & &\\
-		\hline
-		\rowcolor{lightgray}\multicolumn{6}{|l|}{transférer3}\\
-		\hline
-		Read Uncommitted  & & & & &\\
-		\hline
-		Read Committed  & & & & &\\
-		\hline
-		Repeated Read   & & & & &\\
-		\hline
-		Serializable   & & & & &\\
-		\hline
-		\rowcolor{lightgray}\multicolumn{6}{|l|}{transférer4}\\
-		\hline
-		Read Uncommitted  & & & & &\\
-		\hline
-		Read Committed  & & & & &\\
-		\hline
-		Repeated Read  & & & & &\\
-		\hline
-		Serializable  & & & & &\\
-		\hline	
-	\end{tabular}
+	\subsection{Mode non transactionnel}
 
+	
+	\subsection{Mode transactionnel}
+    Le tableau ci-dessous compare les différences entre les différents niveau d'isolation.
+    
+    \definecolor{BGray}{gray}{0.60}
+    \definecolor{Gray}{gray}{0.85}
+    \newcolumntype{a}{>{\columncolor{Gray}}c}
+
+    \begin{tabular}{|a|l|l|l|l|}
+        \hline
+        \rowcolor{BGray}
+                                    & Read Uncommitted & Read Committed & Repeated Read & Serializable \\
+        \hline
+        Nombre d'inter-blocage      & & & & \\
+        \hline
+        Temps d'exécution           & & & & \\
+        \hline
+        Solde initial compte A      & 500 & 500 & 500 & 500 \\
+        \hline
+        Solde initial compte B      & 500 & 500 & 500 & 500 \\
+        \hline
+        Solde final compte A        & & & & \\
+        \hline
+        Solde final compte B        & & & & \\
+        \hline
+    \end{tabular}
+    
 
 \end{document}
