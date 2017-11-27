@@ -1,3 +1,11 @@
+/**
+ * File: TransfertMultiple.java
+ * 
+ * MAC Labo 2 - partie 2
+ * Programme de test d'accès à la base de données
+ * Mathieu Monteverde, Sathyia Kirushnapillai et Michela Zucca
+ */
+
 package mac_labo2_part2;
 
 import java.sql.Connection;
