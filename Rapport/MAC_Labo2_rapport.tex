@@ -185,17 +185,17 @@
 	\end{tabular}
 	
 	\subsubsection{Analyse}
+    Ci-dessus, nous pouvons voir que le mode d'isolation sélectionné est \textit{Repeated Read}. C'est le mode par défaut de InnoDB. Cela n'a aucune conséquence pour cette partie. En effet, il n'y pas de transaction.
+    
 	On remarque évidemment qu'il n'y a pas eu d'interblocage, puisque la procédure en question n'utilise pas de verrous. Comme on pouvait s'y attendre, la cohérence des données n'est pas préservée puisque de l'argent a disparu.
-	
+    
 	On pourra néanmoins utiliser ces temps d'exécution comme valeur étalon pour les tests des autres procédures.
 	
 	\subsection{Mode transactionnel}
 	
 	\subsubsection{Procédure transferer2}
-    Le tableau ci-dessous liste et permet de comparer les différents résultats des tests de la procédure transferer2.
-    
-    
-    
+    Le tableau ci-dessous liste et permet de comparer les différents résultats obtenus des tests de la procédure transferer2.
+
     \definecolor{BGray}{gray}{0.60}
     \definecolor{Gray}{gray}{0.85}
     \newcolumntype{a}{>{\columncolor{Gray}}c}
@@ -222,7 +222,7 @@
 	\subsubsection{Analyse}
 
 	\subsubsection{Procédure transferer3}
-	Le tableau ci-dessous liste et permet de comparer les différents résultats des tests de la procédure transferer3.
+	Le tableau ci-dessous liste et permet de comparer les différents résultats obtenus des tests de la procédure transferer3.
 	
 	
 	
@@ -250,10 +250,12 @@
 	\end{tabular}
 
 	\subsubsection{Analyse}
-
+    Nous pouvons voir dans le tableau ci-dessus que les données sont cohérents pour tous les modes d'isolations. Il y a eu autant d'inter-blocage que la procédure transfert2.
+    
+    Les temps d'exécution ne vont pas du plus rapide au plus lent. Nous ne pouvons pas les comparer.
 
 	\subsubsection{Procédure transferer4}
-	Le tableau ci-dessous liste et permet de comparer les différents résultats des tests de la procédure transferer4.
+	Le tableau ci-dessous liste et permet de comparer les différents résultats obtenus des tests de la procédure transferer4.
 	
 	
 	\definecolor{BGray}{gray}{0.60}
@@ -280,5 +282,8 @@
 	\end{tabular}
     
     \subsubsection{Analyse}
+    Dans cette partie, nous pouvons voir qu'il y a eu aucun inter-blocage et que tous les comptes sont cohérents. Le temps moyen d'exécution est du plus rapide au plus lent. Sauf pour Serializable qui a été un peu plus rapide que Read Committed et Repeatable Read. Mais la différence n'est pas flagrante.
+    
+    Cependant, les temps moyen d'exécution sont nettement meilleur que la procédure transfert2 et transfert3. Étant donné qu'il n'y a pas d'inter-blocage, nous perdons pas de temps à refaire les opérations annulées.
 
 \end{document}
