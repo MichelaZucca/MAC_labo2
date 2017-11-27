@@ -7,13 +7,13 @@
 */.DS_Store
 
 # latex
-rapport/*.log
-rapport/*.lof
-rapport/*.aux
-rapport/*.gz
-rapport/*.lot
-rapport/*.out
-rapport/*.bbl
-rapport/*.blg
-rapport/*.toc
-rapport/*.pdf
+Rapport/*.log
+Rapport/*.lof
+Rapport/*.aux
+Rapport/*.gz
+Rapport/*.lot
+Rapport/*.out
+Rapport/*.bbl
+Rapport/*.blg
+Rapport/*.toc
+Rapport/*.pdf
