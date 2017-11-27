@@ -43,9 +43,9 @@ public class MAC_labo2_part2 {
          System.out.println("==================================");
 
          // Reset the accounts
-         adminAccess.resetComptes();
+         adminAccess.resetAccounts();
          System.out.println("Etat des comptes avant l'expérience: ");
-         adminAccess.etatComptes();
+         adminAccess.displayAccountsState();
 
          // Set the isolation mode for the two working objects
          transfert1.setIsolationMode(isolationMode);
@@ -68,7 +68,7 @@ public class MAC_labo2_part2 {
                System.out.println("Finished transferring...");
 
                System.out.println("Etat des comptes...");
-               adminAccess.etatComptes();
+               adminAccess.displayAccountsState();
 
                System.out.println("");
                System.out.println("U1:");
