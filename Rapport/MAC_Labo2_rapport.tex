@@ -27,50 +27,33 @@
 
 \frenchbsetup{StandardLists=true}
 
-% -----------------------------------------------------------------------
-% --- CODE JAVA ---
-% -----------------------------------------------------------------------
+
 \usepackage{listings} % pour afficher du code
-\definecolor{mauve}{rgb}{0.472,0.035,0.218}
-\definecolor{darkGreen}{rgb}{0.0429,0.601,0.0117}
-\definecolor{antiFlashWite}{rgb}{0.95,0.95,0.96}
+\usepackage{color}
 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
-\lstdefinelanguage{Java}{
-	morekeywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, let,this},
-	morecomment=[s]{/*}{*/},
-	morecomment=[l]//,
-	morestring=[b]",
-	morestring=[b]',
-	morestring=[s]{/[}{/;}
+\lstdefinestyle{mystyle}{  
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
 }
 
-\lstdefinestyle{javaCode}
-{
-	% language related
-	language=Java,
-	keywordstyle=\color{blue},
-	commentstyle=\color{green},
-	stringstyle=\color{mauve},
-	basicstyle=\footnotesize\ttfamily, % Standardschrift
-	numbers=left,               % Ort der Zeilennummern
-	numberstyle=\tiny,          % Stil der Zeilennummern
-	stepnumber=2,               % Abstand zwischen den Zeilennummern
-	numbersep=5pt,              % Abstand der Nummern zum Text
-	tabsize=4,                  % Groesse von Tabs
-	extendedchars=true,         %
-	breaklines=true,            % Zeilen werden Umgebrochen
-	keywordstyle=\color{blue}\bfseries,
-	frame=b,
-	showspaces=false,           % Leerzeichen anzeigen ?
-	showtabs=false,             % Tabs anzeigen ?
-	xleftmargin=17pt,
-	framexleftmargin=17pt,
-	framexrightmargin=5pt,
-	framexbottommargin=4pt,
-	backgroundcolor=\color{antiFlashWite},
-	showstringspaces=false,      % Leerzeichen in Strings anzeigen ?
-}
+\lstset{style=mystyle}
 
 % -----------------------------------------------------------------------
 % --- MARGES ---sp
@@ -109,8 +92,15 @@
 	\setlength{\parskip}{1em}
 	
 	\section*{Codes implémentés}
-	présenter les codes développés en expliquant commentant leur structure et leurs particularités
+    Pour ce laboratoire, nous avons désactivé l'auto commit par défaut de MySQL.
+	\lstinputlisting[language=SQL,firstline=186,lastline=191]{../labo2_procedures.sql}
+    
+    
+    
+    
+    
 	\section*{Tests réalisés}
+    
 	\subsection*{Mode non transactionnel}
 	avec transférer1
 	
@@ -165,5 +155,6 @@
 		Serializable  & & & & &\\
 		\hline	
 	\end{tabular}
+
 
 \end{document}
